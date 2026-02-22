@@ -1,0 +1,5 @@
+# pakages
+/node_modules
+
+# hold before deploy  
+/.github
