@@ -1,16 +1,173 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>Hello World!!</title>
+  <!--
+  File: public/index.html
+
+  Purpose:
+    카드 플립 UI를 포함한 앱 엔트리 포인트. Core Text Integrity Policy와
+    Cards Layout Policy를 적용하여 화면 크기가 변해도 문맥(띄어쓰기/줄바꿈)이 훼손되지 않게 한다.
+
+  Primary Responsibility:
+    카드 그리드(PC 5열/모바일 1열) + 카드 플립(앞/뒤) 구조를 제공하고,
+    플립 토글 스크립트를 로드한다.
+
+  Design Intent:
+    - Text integrity: 공백 기준 줄바꿈만 허용, 한글 음절 분해 금지.
+    - Layout: PC=5열, 모바일=세로 스택(가로 스크롤 금지).
+    - Flip: 클릭/키보드로 카드의 앞/뒤를 토글(명시적 JS로 상태 관리).
+
+  Non-Goals:
+    - 데이터 fetch/DB/상태관리를 담당하지 않는다.
+    - 카드 내용 생성 로직(템플릿 엔진)은 다루지 않는다.
+
+  Dependencies:
+    - ./styles/core.css
+    - ./styles/components-cards.css
+    - ./styles/app.css
+    - ./scripts/flip-cards.js
+
+  Constraints & Assumptions:
+    - flip 상태는 DOM 클래스(is-flipped)로만 표현한다.
+    - 가로 스크롤바는 정책적으로 금지(overflow-x: clip).
+
+  Extension Points:
+    - 카드 컬럼 정책 조정: components-cards.css
+    - 플립 트리거 규칙 변경: flip-cards.js
+  -->
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>mc.growgardens.app</title>
+
+  <link rel="stylesheet" href="./styles/core.css" />
+  <link rel="stylesheet" href="./styles/components-cards.css" />
+  <link rel="stylesheet" href="./styles/app.css" />
 </head>
+
 <body>
-    <header>
-        <div class="logo">Hello World!! (Header)</div>
+  <main class="container">
+    <header class="top-header stack gap-2">
+      <h1 class="title">Grow Gardens</h1>
+      <p class="subtitle measure">
+        PC에서는 5열, 모바일에서는 1열. 문맥(띄어쓰기/줄바꿈) 훼손 없이 카드 플립.
+      </p>
     </header>
 
-    <main>
-        Hello World!! (Main Content)
-    </main>
+    <section class="cards" aria-label="카드 목록">
+      <!-- Card 1 -->
+      <article class="card-node" data-card>
+        <div class="card-3d">
+          <section class="side front" aria-label="카드 앞면">
+            <div class="card__meta small">Card 1 · Front</div>
+            <h2 class="card__title">안녕하세요 당신은 누구입니다.</h2>
+            <p class="card__desc measure preline">
+안녕하세요
+당신은 누구입니다.
+            </p>
+
+            <button class="flip-btn" type="button" data-flip aria-expanded="false">
+              뒤집기
+            </button>
+          </section>
+
+          <section class="side back" aria-label="카드 뒷면">
+            <div class="card__meta small">Card 1 · Back</div>
+            <h3 class="card__subtitle">Back Content</h3>
+            <p class="card__note measure">
+              공백 기준 줄바꿈 정책이 유지됩니다. 음절 단위 분해는 금지됩니다.
+            </p>
+
+            <button class="flip-btn" type="button" data-flip aria-expanded="true">
+              돌아가기
+            </button>
+          </section>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="card-node" data-card>
+        <div class="card-3d">
+          <section class="side front" aria-label="카드 앞면">
+            <div class="card__meta small">Card 2 · Front</div>
+            <h2 class="card__title">두 번째 카드 제목</h2>
+            <p class="card__desc measure">
+              화면이 좁아져도 “안녕/하세요”처럼 쪼개지지 않도록 코어에서 막습니다.
+            </p>
+            <button class="flip-btn" type="button" data-flip aria-expanded="false">뒤집기</button>
+          </section>
+
+          <section class="side back" aria-label="카드 뒷면">
+            <div class="card__meta small">Card 2 · Back</div>
+            <h3 class="card__subtitle">Back</h3>
+            <p class="card__note measure">
+              모바일은 가로 스크롤 없이 1열로 쌓입니다.
+            </p>
+            <button class="flip-btn" type="button" data-flip aria-expanded="true">돌아가기</button>
+          </section>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="card-node" data-card>
+        <div class="card-3d">
+          <section class="side front" aria-label="카드 앞면">
+            <div class="card__meta small">Card 3 · Front</div>
+            <h2 class="card__title">세 번째 카드</h2>
+            <p class="card__desc measure">PC 5열 / 태블릿 2~3열 / 모바일 1열 정책.</p>
+            <button class="flip-btn" type="button" data-flip aria-expanded="false">뒤집기</button>
+          </section>
+
+          <section class="side back" aria-label="카드 뒷면">
+            <div class="card__meta small">Card 3 · Back</div>
+            <h3 class="card__subtitle">Back</h3>
+            <p class="card__note measure">텍스트 정책은 전역에서 강제됩니다.</p>
+            <button class="flip-btn" type="button" data-flip aria-expanded="true">돌아가기</button>
+          </section>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="card-node" data-card>
+        <div class="card-3d">
+          <section class="side front" aria-label="카드 앞면">
+            <div class="card__meta small">Card 4 · Front</div>
+            <h2 class="card__title">네 번째 카드</h2>
+            <p class="card__desc measure">카드를 클릭하거나 버튼으로 뒤집습니다.</p>
+            <button class="flip-btn" type="button" data-flip aria-expanded="false">뒤집기</button>
+          </section>
+
+          <section class="side back" aria-label="카드 뒷면">
+            <div class="card__meta small">Card 4 · Back</div>
+            <h3 class="card__subtitle">Back</h3>
+            <p class="card__note measure">키보드 Enter/Space도 지원합니다.</p>
+            <button class="flip-btn" type="button" data-flip aria-expanded="true">돌아가기</button>
+          </section>
+        </div>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="card-node" data-card>
+        <div class="card-3d">
+          <section class="side front" aria-label="카드 앞면">
+            <div class="card__meta small">Card 5 · Front</div>
+            <h2 class="card__title">다섯 번째 카드</h2>
+            <p class="card__desc measure">5개 샘플로 5열 검증.</p>
+            <button class="flip-btn" type="button" data-flip aria-expanded="false">뒤집기</button>
+          </section>
+
+          <section class="side back" aria-label="카드 뒷면">
+            <div class="card__meta small">Card 5 · Back</div>
+            <h3 class="card__subtitle">Back</h3>
+            <p class="card__note measure">끝.</p>
+            <button class="flip-btn" type="button" data-flip aria-expanded="true">돌아가기</button>
+          </section>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <script type="module" src="./scripts/flip-cards.js"></script>
 </body>
 </html>

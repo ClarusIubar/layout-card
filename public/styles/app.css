@@ -1,0 +1,23 @@
+/* ==========================================================================
+File: public/styles/app.css
+
+Purpose:
+  Branding/visual tone only (must not break core text/layout policies).
+
+Primary Responsibility:
+  Cosmetic adjustments only.
+
+Design Intent:
+  Keep policy invariants intact:
+  - no horizontal scroll
+  - no text fragmentation overrides
+========================================================================== */
+
+.top-header{ margin-bottom: var(--gap-3); }
+
+@media (prefers-color-scheme: dark){
+  .side{
+    background: rgba(255,255,255,0.04);
+    border-color: rgba(255,255,255,0.14);
+  }
+}

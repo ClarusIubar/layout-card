@@ -1,0 +1,100 @@
+/* ==========================================================================
+File: public/styles/components-cards.css
+
+Purpose:
+  Card layout policy + 3D flip mechanism.
+
+Primary Responsibility:
+  - Layout: PC 5 columns, mobile 1 column (no horizontal scrolling).
+  - Flip: Provide transform rules for front/back.
+
+Design Intent:
+  - Layout is deterministic by breakpoints (no ambiguous auto-fit policy here).
+  - Flip is controlled by a single state flag: .card-node.is-flipped
+  - Avoid "content forces width" overflow: minmax(0, 1fr) + min-width:0.
+
+Non-Goals:
+  - Not responsible for global typography (core.css).
+  - Not responsible for event handling (flip-cards.js).
+
+Dependencies:
+  - core.css tokens: gaps, radius, type sizes.
+========================================================================== */
+
+/* Layout policy */
+.cards{
+  display: grid;
+  gap: var(--gap-2);
+  align-items: stretch;
+  grid-template-columns: 1fr; /* mobile default */
+}
+
+@media (min-width: 700px){
+  .cards{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1000px){
+  .cards{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 1280px){
+  .cards{ grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+/* Flip mechanism */
+.card-node{
+  position: relative;
+  height: min(68vh, 52rem); /* legacy-style height; adjust if needed */
+  perspective: 1000px;
+}
+
+.card-3d{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.55s ease;
+}
+
+/* state */
+.card-node.is-flipped .card-3d{
+  transform: rotateY(180deg);
+}
+
+/* faces */
+.side{
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-2);
+  padding: clamp(14px, 1.4vw, 24px);
+  border: 1px solid rgba(127,127,127,0.25);
+  background: rgba(127,127,127,0.05);
+
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden; /* 카드 내부 오버플로우는 카드 안에서만 관리 */
+}
+
+/* front/back orientation */
+.front{ transform: rotateY(0deg); }
+.back{ transform: rotateY(180deg); }
+
+/* content typography */
+.card__meta{ opacity: 0.75; margin-bottom: var(--gap-1); }
+.card__title{ font-size: var(--h2); margin: 0 0 var(--gap-1) 0; }
+.card__subtitle{ font-size: var(--h3); margin: var(--gap-2) 0 var(--gap-1) 0; }
+.card__desc, .card__note{ margin: 0; opacity: 0.9; }
+
+/* control */
+.flip-btn{
+  margin-top: var(--gap-2);
+  padding: 0.65rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(127,127,127,0.35);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* accessibility: reduce motion */
+@media (prefers-reduced-motion: reduce){
+  .card-3d{ transition: none; }
+}

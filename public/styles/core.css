@@ -1,0 +1,84 @@
+/* ==========================================================================
+File: public/styles/core.css
+
+Purpose:
+  Global tokens + text integrity rules to preserve author-intended spacing.
+
+Primary Responsibility:
+  Enforce "wrap at spaces/punctuation only" and prevent Korean syllable splitting.
+
+Design Intent:
+  - Block the failure mode: syllable-level splitting (안녕/하세요).
+  - Preserve whitespace semantics in authored HTML.
+  - Prevent horizontal scrollbars as a policy.
+
+Non-Goals:
+  - Not responsible for card grid column policy (components-cards.css).
+  - Not responsible for flip transforms (components-cards.css).
+
+Dependencies:
+  None.
+========================================================================== */
+
+:root{
+  font-size: clamp(14px, 1.1vw, 18px);
+
+  --gap-1: clamp(8px, 1vw, 16px);
+  --gap-2: clamp(12px, 1.5vw, 24px);
+  --gap-3: clamp(16px, 2vw, 32px);
+
+  --radius-2: clamp(14px, 1.2vw, 22px);
+
+  --h1: clamp(1.6rem, 2.6vw, 2.6rem);
+  --h2: clamp(1.15rem, 1.8vw, 1.7rem);
+  --h3: clamp(1.05rem, 1.4vw, 1.35rem);
+  --body: clamp(0.95rem, 1.0vw, 1.05rem);
+  --small: clamp(0.8rem, 0.9vw, 0.95rem);
+
+  --measure: 62ch;
+}
+
+html, body{
+  margin: 0;
+  padding: 0;
+  overflow-x: clip; /* Policy: no horizontal scrollbar */
+}
+
+body{
+  font-family: system-ui, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  font-size: var(--body);
+  line-height: 1.55;
+}
+
+/* TEXT INTEGRITY POLICY (Priority) */
+*{
+  box-sizing: border-box;
+  white-space: normal;
+  word-break: keep-all;
+  overflow-wrap: normal;
+  line-break: strict;
+}
+
+/* preserve explicit newlines where opted-in */
+.preline{ white-space: pre-line; }
+
+.container{
+  width: min(1800px, 100%);
+  margin-inline: auto;
+  padding: var(--gap-3);
+}
+
+.measure{ max-width: var(--measure); }
+.stack{ display: grid; }
+.gap-1{ gap: var(--gap-1); }
+.gap-2{ gap: var(--gap-2); }
+.gap-3{ gap: var(--gap-3); }
+
+.title{ font-size: var(--h1); margin: 0; }
+.subtitle{ margin: 0; opacity: 0.85; }
+.small{ font-size: var(--small); }
+
+/* Grid overflow safety */
+.cards > *{ min-width: 0; }
+.card-node{ min-width: 0; }
+.side{ min-width: 0; }
